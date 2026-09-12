@@ -184,10 +184,7 @@ function main()
     update_fstab(fstab_entry)
     println("✅ /etc/fstab 갱신 완료 (재부팅 후에도 유지됨)")
 
-    # ── 6. [2단계] pacman 패키지 설치 ───────────────────────────────────
-    println("\n📦 [2단계] 필요한 패키지 설치를 시작합니다...")
-    run_or_die(`pacman -Syu --needed --noconfirm archiso julia rust git base-devel imagemagick xorriso squashfs-tools curl libarchive`, "패키지 설치")
-    println("✅ 패키지 설치가 완료되었습니다.")
+
 
     # ── 7. [3단계] GitHub 에서 blnx2.tar.bz2 다운로드 ───────────────────
     cd("/tmp")
