@@ -3,7 +3,7 @@
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
 ┃ 📁File      📄 getready.jl                                                       ┃
 ┃ 📙Brief     📝 Getting ready for your computer to build Blunux                   ┃
-┃ 🧾Details   🔎 Blunux /tmp 32GB expansion, package installation, and build setup ┃
+┃ 🧾Details   🔎 Blunux /tmp fGB expansion, package installation, and build setup ┃
 ┃ 🚩OAuthor   🦋 Original Author: Jaewoo Joung/정재우/郑在祐                          ┃
 ┃ 👨‍🔧LAuthor   👤 Last Author: Jaewoo Joung                                         ┃
 ┃ 📆LastDate  📍 2026-09-12 🔄Please support to keep update🔄                      ┃
@@ -208,7 +208,7 @@ function main()
     #   -Sy 만  : DB 만 갱신하고 설치하면 partial upgrade 가 되어 시스템이 깨질 수 있다.
     #   -Syu   : DB 갱신 + 전체 업그레이드 + 설치. Arch 에서 유일하게 안전한 방식.
     # 이미 root 로 실행 중이므로 sudo 는 붙이지 않는다.
-    pacman_cmd = `pacman -Syu --noconfirm $PACKAGES`
+    pacman_cmd = `pacman -Syu --needed --noconfirm $PACKAGES`
     println("   실행: ", pacman_cmd)
     proc = run(ignorestatus(pacman_cmd))
     if !success(proc)
