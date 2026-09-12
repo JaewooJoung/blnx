@@ -3,7 +3,7 @@
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
 ┃ 📁File      📄 getready.jl                                                       ┃
 ┃ 📙Brief     📝 Getting ready for your computer to build Blunux                   ┃
-┃ 🧾Details   🔎 Blunux /tmp 32GB expansion, package installation, and build setup ┃
+┃ 🧾Details   🔎 Blunux /tmp 32GB expansion and build source setup                 ┃
 ┃ 🚩OAuthor   🦋 Original Author: Jaewoo Joung/정재우/郑在祐                          ┃
 ┃ 👨‍🔧LAuthor   👤 Last Author: Jaewoo Joung                                         ┃
 ┃ 📆LastDate  📍 2026-09-12 🔄Please support to keep update🔄                      ┃
@@ -145,7 +145,7 @@ function main()
         exit(1)
     end
 
-    for cmd in ("mount", "pacman", "curl", "bsdtar")
+    for cmd in ("mount", "curl", "bsdtar")
         has_command(cmd) || die("필수 명령을 찾을 수 없습니다: ", cmd)
     end
 
@@ -184,11 +184,9 @@ function main()
     update_fstab(fstab_entry)
     println("✅ /etc/fstab 갱신 완료 (재부팅 후에도 유지됨)")
 
-
-
-    # ── 7. [3단계] GitHub 에서 blnx2.tar.bz2 다운로드 ───────────────────
+    # ── 6. [2단계] GitHub 에서 blnx2.tar.bz2 다운로드 ───────────────────
     cd("/tmp")
-    println("\n📥 [3단계] $(FILE_URL) 에서 파일을 다운로드합니다...")
+    println("\n📥 [2단계] $(FILE_URL) 에서 파일을 다운로드합니다...")
     rm(OUTPUT_FILE; force = true)
     # -f: HTTP 오류를 실패로 처리(404 페이지를 저장하지 않음), --retry: 일시적 오류 재시도
     run_or_die(`curl -fL --retry 3 --retry-delay 2 -o $OUTPUT_FILE $FILE_URL`, "파일 다운로드")
@@ -199,8 +197,8 @@ function main()
         die("다운로드된 파일이 bzip2 아카이브가 아닙니다. URL 이나 네트워크를 확인해주세요.")
     println("✅ 다운로드 완료: $(OUTPUT_FILE) ($(filesize(OUTPUT_FILE)) bytes)")
 
-    # ── 8. [4단계] 기존 디렉터리 삭제 및 압축 해제 ──────────────────────
-    println("\n📂 [4단계] 기존 디렉터리 정리 및 압축 해제를 진행합니다...")
+    # ── 7. [3단계] 기존 디렉터리 삭제 및 압축 해제 ──────────────────────
+    println("\n📂 [3단계] 기존 디렉터리 정리 및 압축 해제를 진행합니다...")
     if isdir(TARGET_DIR)
         rm(TARGET_DIR; recursive = true, force = true)
         println("✅ 기존 $(TARGET_DIR) 디렉터리를 삭제(정리)했습니다.")
@@ -208,8 +206,8 @@ function main()
     run_or_die(`bsdtar -xjf $OUTPUT_FILE -C /tmp`, "압축 해제")
     println("✅ 압축 해제 완료.")
 
-    # ── 9. [5단계] 결과 확인 ────────────────────────────────────────────
-    println("\n📂 [5단계] $(TARGET_DIR) 디렉터리를 확인합니다...")
+    # ── 8. [4단계] 결과 확인 ────────────────────────────────────────────
+    println("\n📂 [4단계] $(TARGET_DIR) 디렉터리를 확인합니다...")
     isdir(TARGET_DIR) || die("오류: $(TARGET_DIR) 디렉터리가 존재하지 않습니다.")
 
     println("🎉 준비가 모두 끝났습니다!")
