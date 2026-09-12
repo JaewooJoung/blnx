@@ -3,7 +3,7 @@
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
 ┃ 📁File      📄 getready.jl                                                       ┃
 ┃ 📙Brief     📝 Getting ready for your computer to build Blunux                   ┃
-┃ 🧾Details   🔎 Blunux /tmp fGB expansion, package installation, and build setup ┃
+┃ 🧾Details   🔎 Blunux /tmp 32GB expansion, package installation, and build setup ┃
 ┃ 🚩OAuthor   🦋 Original Author: Jaewoo Joung/정재우/郑在祐                          ┃
 ┃ 👨‍🔧LAuthor   👤 Last Author: Jaewoo Joung                                         ┃
 ┃ 📆LastDate  📍 2026-09-12 🔄Please support to keep update🔄                      ┃
@@ -131,6 +131,44 @@ function update_fstab(entry::AbstractString)
     return nothing
 end
 
+"해당 패키지가 설치되어 있는지 확인한다."
+function is_installed(pkg::AbstractString)
+    return success(pipeline(`pacman -Qq $pkg`; stdout = devnull, stderr = devnull))
+end
+
+"""
+rust / rustup 충돌을 정리한다.
+
+Arch 의 `rust` 패키지와 `rustup` 은 둘 다 /usr/bin/rustc, /usr/bin/cargo 를 제공하므로
+서로 conflict 한다. 하나라도 설치되어 있으면 `pacman -S rust` 가 충돌로 실패하기 때문에
+설치 전에 먼저 제거한다. 제거 직후 [2단계]에서 `rust` 를 다시 설치한다.
+"""
+function cleanup_rust_conflicts()
+    for pkg in ("rustup", "rust")
+        is_installed(pkg) || continue
+        println("🧹 충돌 방지: 기존 ", pkg, " 패키지를 제거합니다...")
+        # 먼저 정상 제거를 시도한다.
+        if success(run(ignorestatus(`pacman -R --noconfirm $pkg`)))
+            println("✅ ", pkg, " 제거 완료.")
+            continue
+        end
+        # 다른 패키지가 의존하고 있으면 -R 이 거부된다.
+        # rust 는 바로 아래에서 다시 설치되므로, 의존성 검사를 건너뛰고 제거한다.
+        println("ℹ️  의존성 때문에 일반 제거가 거부되었습니다. 의존성 검사를 건너뛰고 제거합니다...")
+        if success(run(ignorestatus(`pacman -Rdd --noconfirm $pkg`)))
+            println("✅ ", pkg, " 제거 완료 (-Rdd).")
+        else
+            println(stderr, "❌ ", pkg, " 제거에 실패했습니다.")
+            println(stderr, "   수동으로 정리한 뒤 다시 실행해주세요:")
+            println(stderr, "       sudo pacman -Rdd ", pkg)
+            exit(1)
+        end
+    end
+    # 참고: rustup 이 ~/.cargo, ~/.rustup 에 설치한 툴체인은 그대로 남습니다.
+    #       PATH 에 ~/.cargo/bin 이 앞서 있으면 pacman 의 rustc 대신 그쪽이 잡힐 수 있습니다.
+    return nothing
+end
+
 "내려받은 파일이 실제 bzip2 아카이브인지 매직 바이트로 확인한다."
 function is_bzip2(path::AbstractString)
     filesize(path) > 4 || return false
@@ -203,12 +241,15 @@ function main()
         exit(1)
     end
 
-    # 2-b. -Syu 를 쓴다.
+    # 2-b. rust / rustup 충돌 정리 (설치 전에 반드시 먼저)
+    cleanup_rust_conflicts()
+
+    # 2-c. -Syu 를 쓴다.
     #   -S  만  : 로컬 DB 가 오래되면 미러에 없는 옛 버전을 받으려다 404 로 실패한다.
     #   -Sy 만  : DB 만 갱신하고 설치하면 partial upgrade 가 되어 시스템이 깨질 수 있다.
     #   -Syu   : DB 갱신 + 전체 업그레이드 + 설치. Arch 에서 유일하게 안전한 방식.
     # 이미 root 로 실행 중이므로 sudo 는 붙이지 않는다.
-    pacman_cmd = `pacman -Syu --needed --noconfirm $PACKAGES`
+    pacman_cmd = `pacman -Syu --noconfirm $PACKAGES`
     println("   실행: ", pacman_cmd)
     proc = run(ignorestatus(pacman_cmd))
     if !success(proc)
@@ -224,6 +265,8 @@ function main()
         println(stderr, "       → Arch 계열이 아니거나 extra 저장소가 꺼져 있음. /etc/pacman.conf 확인")
         println(stderr, "   • exists in filesystem / conflicting files")
         println(stderr, "       → 충돌 파일을 확인한 뒤 수동 처리 (--overwrite 는 신중히)")
+        println(stderr, "   • rust 관련 conflict 가 또 난다면")
+        println(stderr, "       → sudo pacman -Qq | grep -i rust  로 남은 패키지를 확인하세요")
         exit(1)
     end
     println("✅ 패키지 설치가 완료되었습니다.")
