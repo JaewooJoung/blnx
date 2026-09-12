@@ -3,7 +3,7 @@
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
 ┃ 📁File      📄 getready.jl                                                       ┃
 ┃ 📙Brief     📝 Getting ready for your computer to build Blunux                   ┃
-┃ 🧾Details   🔎 Blunux /tmp 32GB expansion, package installation, and build setup ┃
+┃ 🧾Details   🔎 Blunux /tmp 16GB expansion, package installation, and build setup ┃
 ┃ 🚩OAuthor   🦋 Original Author: Jaewoo Joung/정재우/郑在祐                          ┃
 ┃ 👨‍🔧LAuthor   👤 Last Author: Jaewoo Joung                                         ┃
 ┃ 📆LastDate  📍 2026-09-12 🔄Please support to keep update🔄                      ┃
@@ -12,11 +12,10 @@
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 
 사용법 / Usage:
-    sudo julia getready.jl           # /tmp 를 32GB 로 설정
-    sudo julia getready.jl 48        # /tmp 를 48GB 로 설정
+    sudo julia getready.jl           # /tmp 를 16GB 로 설정
 =#
 
-const DEFAULT_TARGET_GB = 32
+const TARGET_GB = 16
 
 const PACKAGES = [
     "archiso", "julia", "rust", "git", "base-devel",
@@ -137,13 +136,6 @@ function main()
     # ── 0. 실행 환경 확인 ────────────────────────────────────────────────
     Sys.islinux() || die("이 스크립트는 Linux 전용입니다. (현재: ", Sys.KERNEL, ")")
 
-    target_gb = DEFAULT_TARGET_GB
-    if !isempty(ARGS)
-        parsed = tryparse(Int, ARGS[1])
-        (parsed === nothing || parsed <= 0) && die("용량 인자가 잘못되었습니다: ", ARGS[1])
-        target_gb = parsed
-    end
-
     # ── 1. 루트 권한(sudo) 확인 ─────────────────────────────────────────
     if current_uid() != 0
         println("⚠️  루트 권한이 필요합니다. 'sudo julia getready.jl' 로 실행해주세요.")
@@ -157,16 +149,16 @@ function main()
     # ── 2. 시스템 전체 메모리(RAM + Swap) 계산 ──────────────────────────
     total_gb = total_memory_gb()
     println("📊 시스템 전체 메모리 (RAM + Swap): ", round(total_gb, digits = 2), " GB")
-    println("🎯 요청된 /tmp 용량: ", target_gb, " GB (필요한 전체 메모리: ", target_gb * 2, " GB 이상)")
+    println("🎯 요청된 /tmp 용량: ", TARGET_GB, " GB (필요한 전체 메모리: ", TARGET_GB * 2, " GB 이상)")
 
     # ── 3. 용량 조건 체크 ───────────────────────────────────────────────
-    if total_gb < target_gb * 2
+    if total_gb < TARGET_GB * 2
         println(stderr, "❌ 오류: 메모리 용량이 부족합니다.")
-        println(stderr, "   /tmp 를 $(target_gb)GB 로 설정하려면 RAM + Swap 이 최소 $(target_gb * 2)GB 이상이어야 합니다.")
+        println(stderr, "   /tmp 를 $(TARGET_GB)GB 로 설정하려면 RAM + Swap 이 최소 $(TARGET_GB * 2)GB 이상이어야 합니다.")
         exit(1)
     end
 
-    target_size = "$(target_gb)G"
+    target_size = "$(TARGET_GB)G"
     fstab_entry = "tmpfs /tmp tmpfs defaults,noatime,mode=1777,size=$(target_size) 0 0"
 
     # ── 4. 현재 실행 중인 시스템의 /tmp 즉시 적용 ───────────────────────
