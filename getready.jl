@@ -3,7 +3,7 @@
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
 ┃ 📁File      📄 getready.jl                                                       ┃
 ┃ 📙Brief     📝 Getting ready for your computer to build Blunux                   ┃
-┃ 🧾Details   🔎 Blunux /tmp 16GB expansion, package installation, and build setup ┃
+┃ 🧾Details   🔎 Blunux /tmp 32GB expansion, package installation, and build setup ┃
 ┃ 🚩OAuthor   🦋 Original Author: Jaewoo Joung/정재우/郑在祐                          ┃
 ┃ 👨‍🔧LAuthor   👤 Last Author: Jaewoo Joung                                         ┃
 ┃ 📆LastDate  📍 2026-09-12 🔄Please support to keep update🔄                      ┃
@@ -12,10 +12,10 @@
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 
 사용법 / Usage:
-    sudo julia getready.jl           # /tmp 를 16GB 로 설정
+    sudo julia getready.jl           # /tmp 를 32GB 로 설정
 =#
 
-const TARGET_GB = 16
+const TARGET_GB = 32
 
 const PACKAGES = [
     "archiso", "julia", "rust", "git", "base-devel",
@@ -51,7 +51,10 @@ function total_memory_gb()
             swap_kb = value
         end
     end
-    mem_kb == 0 && die("/proc/meminfo 에서 MemTotal 값을 읽지 못했습니다.")
+    if mem_kb == 0
+        # 안내용 정보일 뿐이므로 읽기 실패로 중단하지는 않는다.
+        println("⚠️  /proc/meminfo 에서 MemTotal 값을 읽지 못했습니다. 메모리 안내를 건너뜁니다.")
+    end
     return (mem_kb + swap_kb) / (1024 * 1024)
 end
 
@@ -149,14 +152,18 @@ function main()
     # ── 2. 시스템 전체 메모리(RAM + Swap) 계산 ──────────────────────────
     total_gb = total_memory_gb()
     println("📊 시스템 전체 메모리 (RAM + Swap): ", round(total_gb, digits = 2), " GB")
-    println("🎯 요청된 /tmp 용량: ", TARGET_GB, " GB (필요한 전체 메모리: ", TARGET_GB * 2, " GB 이상)")
+    println("🎯 요청된 /tmp 용량: ", TARGET_GB, " GB")
+    println("📐 권장 여유 기준(참고용): RAM + Swap ", TARGET_GB * 2, " GB 이상")
 
-    # ── 3. 용량 조건 체크 ───────────────────────────────────────────────
+    # ── 3. 용량 상태 안내 (참고용 — 진행을 막지 않는다) ─────────────────
     if total_gb < TARGET_GB * 2
-        println(stderr, "❌ 오류: 메모리 용량이 부족합니다.")
-        println(stderr, "   /tmp 를 $(TARGET_GB)GB 로 설정하려면 RAM + Swap 이 최소 $(TARGET_GB * 2)GB 이상이어야 합니다.")
-        exit(1)
+        println("ℹ️  참고: 전체 메모리가 권장 기준($(TARGET_GB * 2)GB)보다 적습니다.")
+        println("   tmpfs 는 실제로 쓴 만큼만 메모리를 차지하므로 $(TARGET_GB)GB 설정 자체는 문제 없지만,")
+        println("   빌드 중 /tmp 를 가득 채우면 OOM 이나 심한 스와핑이 날 수 있습니다.")
+    else
+        println("✅ 전체 메모리가 권장 기준을 충족합니다.")
     end
+    println("   (이 항목은 안내용이며 진행을 막지 않습니다.)")
 
     target_size = "$(TARGET_GB)G"
     fstab_entry = "tmpfs /tmp tmpfs defaults,noatime,mode=1777,size=$(target_size) 0 0"
