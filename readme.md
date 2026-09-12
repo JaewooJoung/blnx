@@ -13,8 +13,5 @@ Arch Linux 환경에서 Blunux 빌드를 위해 `/tmp` 용량을 32GB로 확장�
 curl -L -o getready.jl https://raw.githubusercontent.com/JaewooJoung/blnx/main/getready.jl
 
 
-# 2. 실행 권한 부여
-chmod +x getready.jl
-
-# 3. 루트 권한으로 스크립트 실행
-sudo ./getready.jl
+# 2. 패키지 준비
+pacman -Syu --needed --noconfirm archiso julia rust git base-devel imagemagick xorriso squashfs-tools curl libarchive
