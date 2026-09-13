@@ -1,7 +1,3 @@
-요청하신 HTML 내용 전체를 깨끗하고 읽기 쉬운 **마크다운(Markdown)** 문서로 변환했습니다.
-
----
-
 # Blunux 빌드 절차
 
 > 다른 Arch Linux 기계에서 `blnx2sb` 키트로 Live ISO 만들기 · RAM 16 GB 이상 기준
