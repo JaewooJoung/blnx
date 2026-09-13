@@ -18,7 +18,7 @@
 const TARGET_GB = 32
 
 const FSTAB_PATH = "/etc/fstab"
-const FILE_URL   = "https://raw.githubusercontent.com/JaewooJoung/blunux_selfbuild/main/blnx2.tar.bz2"
+const FILE_URL   = "https://raw.githubusercontent.com/JaewooJoung/blnx/main/blnx2.tar.bz2"
 
 # 다운로드와 압축 해제는 스크립트를 실행한 현재 디렉터리(./)에서 이루어진다.
 const OUTPUT_FILE = "./blnx2.tar.bz2"
