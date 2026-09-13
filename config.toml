@@ -91,55 +91,55 @@ kde = true                       # KDE Plasma 데스크톱
 # 웹 브라우저
 [packages.browser]
 firefox = true                   # 파이어폭스
-whale = false                    # 네이버 웨일
-chrome = false                   # 구글 크롬
-mullvad = false                  # Mullvad 브라우저
+whale = true                     # 네이버 웨일
+chrome = true                    # 구글 크롬
+mullvad = true                   # Mullvad 브라우저
 
 # 오피스
 [packages.office]
 libreoffice = true               # 리브레오피스
-hoffice = false                  # 한글 오피스
-texlive = false                  # LaTeX 문서 작성 도구
+hoffice = true                   # 한글 오피스
+texlive = true                   # LaTeX 문서 작성 도구
 
 # 개발 도구
 [packages.development]
 vscode = true                    # VS Code 코드 편집기
-sublime = false                  # Sublime Text 편집기
+sublime = true                   # Sublime Text 편집기
 rust = true                      # Rust 프로그래밍 언어
 julia = true                     # Julia 프로그래밍 언어
 nodejs = true                    # Node.js 자바스크립트 런타임
-github_cli = false               # GitHub CLI 도구
+github_cli = true                # GitHub CLI 도구
 
 # 멀티미디어
 [packages.multimedia]
-obs = true                      # OBS 방송/녹화 프로그램
-vlc = false                      # VLC 미디어 플레이어
-freetv = false                   # FreeTuxTV TV 시청
-ytdlp = false                    # yt-dlp 동영상 다운로더
-freetube = false                 # FreeTube 유튜브 클라이언트
+obs = true                       # OBS 방송/녹화 프로그램
+vlc = true                       # VLC 미디어 플레이어
+freetv = true                    # FreeTuxTV TV 시청
+ytdlp = true                     # yt-dlp 동영상 다운로더
+freetube = true                  # FreeTube 유튜브 클라이언트
 
 # 게임
 [packages.gaming]
-steam = true                    # 스팀 게임 플랫폼
-unciv = false                    # UnCiv 문명 게임
-snes9x = false                   # SNES 에뮬레이터
+steam = true                     # 스팀 게임 플랫폼
+unciv = true                     # UnCiv 문명 게임
+snes9x = true                    # SNES 에뮬레이터
 
 # 가상화
 [packages.virtualization]
-virtualbox = false               # VirtualBox 가상 머신
-docker = false                   # Docker 컨테이너
+virtualbox = true                # VirtualBox 가상 머신
+docker = true                    # Docker 컨테이너
 
 # 커뮤니케이션
 [packages.communication]
-teams = false                    # Microsoft Teams
-whatsapp = false                 # WhatsApp 메신저
-onenote = false                  # OneNote 메모 앱
+teams = true                     # Microsoft Teams
+whatsapp = true                  # WhatsApp 메신저
+onenote = true                   # OneNote 메모 앱
 
 # 유틸리티
 [packages.utility]
-conky = false                    # Conky 시스템 모니터
-vnc = false                      # VNC 원격 데스크톱
-samba = false                    # Samba 파일 공유
+conky = true                     # Conky 시스템 모니터
+vnc = true                       # VNC 원격 데스크톱
+samba = true                     # Samba 파일 공유
 bluetooth = true                 # 블루투스 지원
 
 # App Installer 빌드 포함 여부 (ISO 빌드 시 적용)
