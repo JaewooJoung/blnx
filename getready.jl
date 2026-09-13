@@ -3,7 +3,7 @@
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
 ┃ 📁File      📄 getready.jl                                                       ┃
 ┃ 📙Brief     📝 Getting ready for your computer to build Blunux                   ┃
-┃ 🧾Details   🔎 Blunux /tmp 32GB expansion and build source setup                 ┃
+┃ 🧾Details   🔎 Blunux /tmp 32GB expansion, then unpack sources into ./           ┃
 ┃ 🚩OAuthor   🦋 Original Author: Jaewoo Joung/정재우/郑在祐                          ┃
 ┃ 👨‍🔧LAuthor   👤 Last Author: Jaewoo Joung                                         ┃
 ┃ 📆LastDate  📍 2026-09-12 🔄Please support to keep update🔄                      ┃
@@ -17,10 +17,12 @@
 
 const TARGET_GB = 32
 
-const FSTAB_PATH  = "/etc/fstab"
-const FILE_URL    = "https://raw.githubusercontent.com/JaewooJoung/blnx/main/blnx2.tar.bz2"
-const OUTPUT_FILE = "/tmp/blnx2.tar.bz2"
-const TARGET_DIR  = "/tmp/blnx2sb"
+const FSTAB_PATH = "/etc/fstab"
+const FILE_URL   = "https://raw.githubusercontent.com/JaewooJoung/blnx/main/blnx2.tar.bz2"
+
+# 다운로드와 압축 해제는 스크립트를 실행한 현재 디렉터리(./)에서 이루어진다.
+const OUTPUT_FILE = "./blnx2.tar.bz2"
+const TARGET_DIR  = "./blnx2sb"
 
 "오류 메시지를 출력하고 종료 코드 1 로 스크립트를 끝낸다."
 die(msg...) = (println(stderr, "❌ ", msg...); exit(1))
@@ -185,8 +187,8 @@ function main()
     println("✅ /etc/fstab 갱신 완료 (재부팅 후에도 유지됨)")
 
     # ── 6. [2단계] GitHub 에서 blnx2.tar.bz2 다운로드 ───────────────────
-    cd("/tmp")
     println("\n📥 [2단계] $(FILE_URL) 에서 파일을 다운로드합니다...")
+    println("   작업 위치: ", pwd())
     rm(OUTPUT_FILE; force = true)
     # -f: HTTP 오류를 실패로 처리(404 페이지를 저장하지 않음), --retry: 일시적 오류 재시도
     run_or_die(`curl -fL --retry 3 --retry-delay 2 -o $OUTPUT_FILE $FILE_URL`, "파일 다운로드")
@@ -203,7 +205,7 @@ function main()
         rm(TARGET_DIR; recursive = true, force = true)
         println("✅ 기존 $(TARGET_DIR) 디렉터리를 삭제(정리)했습니다.")
     end
-    run_or_die(`bsdtar -xjf $OUTPUT_FILE -C /tmp`, "압축 해제")
+    run_or_die(`bsdtar -xjf $OUTPUT_FILE`, "압축 해제")
     println("✅ 압축 해제 완료.")
 
     # ── 8. [4단계] 결과 확인 ────────────────────────────────────────────
@@ -212,7 +214,7 @@ function main()
 
     println("🎉 준비가 모두 끝났습니다!")
     println("   이어서 빌드하려면 셸에서 다음을 실행하세요:")
-    println("       cd $(TARGET_DIR)")
+    println("       cd ", abspath(TARGET_DIR))
     return 0
 end
 
