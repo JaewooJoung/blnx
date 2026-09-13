@@ -167,7 +167,7 @@ sudo ventoy -i /dev/sdX
 USB 를 뽑았다 꽂으면 `Ventoy` 라는 이름으로 마운트됩니다. 거기에 그냥 복사하면 끝입니다.
 
 ```bash
-cp ~/blnx2sb/out/blunux2-*.iso /run/media/$USER/Ventoy/
+cp ./blnx2sb/out/blunux2-*.iso /run/media/$USER/Ventoy/
 
 ```
 
