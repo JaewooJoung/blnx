@@ -1,6 +1,6 @@
 # Blunux (블루눅스)
 
-![Blunux]([https://blunux.com/assets/logo-512.png)
+![Blunux](logo-512.png)
 
 [Arch Linux](https://archlinux.org) 기반의 리눅스 배포판. [KDE Plasma](https://kde.org/plasma-desktop/)를
 기본 데스크톱 환경으로 사용하며, 스웨덴에 거주하는 한국인 개발자 Jaewoo Joung이 개인 프로젝트로
