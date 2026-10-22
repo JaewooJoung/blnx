@@ -14,7 +14,7 @@ fwupd
 
 # 4. 터미널 및 기본 쉘
 fish
-windterm-bin
+windterm-bin (build 해서 내사이트에 추가 예정)
 
 # 5. 코어 시스템 유틸리티 (Rust 기반 coreutils)
 uutils-coreutils-compat
