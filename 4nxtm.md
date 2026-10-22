@@ -18,7 +18,8 @@
 #### 4. 터미널 및 기본 쉘
 
 * fish
-* windterm-bin
+* windterm-bin (blunux 로컬리포지토리 사용)
+* paru-bin (blunux 로컬리포지토리 사용)
 
 #### 5. 코어 시스템 유틸리티 (Rust 기반 coreutils)
 
